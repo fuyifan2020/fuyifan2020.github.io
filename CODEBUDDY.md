@@ -12,9 +12,9 @@ This file provides guidance to CodeBuddy Code when working with code in this rep
 
 ## 常用命令
 
-本仓库没有任何包管理器或构建工具，无需 `npm install` / `build`。
+本仓库没有任何包管理器或构建工具，无需 `npm install` / `build`。仅发布脚本 `scripts/publish_post.py` 需要 Python 3（无第三方依赖）。
 
-- **本地预览**：在仓库根目录运行 `python3 -m http.server 8099`，浏览器打开 `http://localhost:8099/index.html`。（必须用本地服务器预览，因为文章列表由 JS 渲染，直接双击 `file://` 打开时部分浏览器会拦截脚本。）
+- **本地预览**：在仓库根目录运行 `python3 -m http.server 8099`，浏览器打开 `http://localhost:8099/index.html`。（必须用本地服务器预览，因为文章列表由 JS 渲染，直接双击 `file://` 打开时部分浏览器会拦截脚本。Windows 下若 `python3` 不可用，改用 `python -m http.server 8099`。）
 - **部署**：直接 `git add` + `git commit` + `git push` 到 `main` 分支，GitHub Pages 会自动发布（通常 1 分钟内生效）。
 - **检查页面是否可访问**：`curl -s -o /dev/null -w "%{http_code}" http://localhost:8099/index.html`（预期 `200`）。
 - **校验文章数据**：`node -e "global.window={};require('./js/posts.js');console.log(window.POSTS.length)"`。
@@ -22,12 +22,17 @@ This file provides guidance to CodeBuddy Code when working with code in this rep
 ## 架构与目录结构
 
 ```
-index.html          首页：Hero 简介 + 文章列表容器(#post-list)
-about.html          关于我页
-posts/<slug>.html   每篇文章一个独立 HTML 文件（真实正文写在这里）
-assets/css/style.css 全局设计系统（CSS 变量、排版、布局、响应式、动效）
-js/posts.js         文章元数据数组 window.POSTS（首页列表的数据源）
-js/main.js          交互脚本：渲染列表(含 #post-count 计数)、移动端导航、滚动渐显、导航高亮
+index.html              首页：Hero 简介 + 文章列表容器(#post-list)
+about.html              关于我页
+posts/<slug>.html       每篇文章一个独立 HTML 文件（真实正文写在这里）
+assets/css/style.css    全局设计系统（CSS 变量、排版、布局、响应式、动效）
+assets/papers/<slug>.pdf 随附的论文 PDF（由发布脚本复制进来）
+js/posts.js             文章元数据数组 window.POSTS（首页列表的数据源）
+js/main.js              交互脚本：渲染列表(含 #post-count 计数)、移动端导航、滚动渐显、导航高亮
+Blogs/<日期>/           文章源文件草稿夹（.md + 可选 .pdf），发布脚本的输入
+scripts/publish_post.py 发布脚本：md → posts/<slug>.html、复制 PDF、登记 posts.js
+POSTING.md              发布流程的人类可读指南
+CODEBUDDY.md            本文件
 ```
 
 ### 关键设计约定

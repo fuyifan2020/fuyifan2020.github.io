@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>邀请 · FuYifan</title>
+<meta name="description" content="一个粉色的小邀请？" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC",
+                 "Microsoft YaHei", sans-serif;
+    background: linear-gradient(160deg, #ffe3ef 0%, #ffc9dd 45%, #ffb1d0 100%);
+    color: #5c2a3d;
+    overflow: hidden;               /* 按钮移动不撑开页面 */
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- 飘落的小爱心背景 ---- */
+  .hearts { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .heart {
+    position: absolute; bottom: -48px;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10%  { opacity: .45; }
+    100% { transform: translateY(-115vh) rotate(340deg); opacity: 0; }
+  }
+
+  /* ---- 页面骨架 ---- */
+  .page {
+    position: relative; z-index: 1;
+    min-height: 100dvh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 24px;
+  }
+  .page2 { display: none; }
+  .page2.show { display: flex; }
+
+  /* ---- 左上角返回博客首页 ---- */
+  .back-home {
+    position: fixed; top: 16px; left: 16px; z-index: 50;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(255, 46, 126, 0.35);
+    color: #d4146a; font-size: 14px; letter-spacing: .06em;
+    backdrop-filter: blur(6px);
+    transition: background .25s ease, transform .25s ease;
+  }
+  .back-home:hover { background: #fff; transform: translateX(-2px); }
+  .back-home:focus-visible { outline: 3px solid rgba(255,255,255,.85); outline-offset: 3px; }
+
+  .title {
+    font-family: "Noto Serif SC", "Songti SC", STSong, serif;
+    font-size: clamp(30px, 6vw, 48px);
+    font-weight: 600; letter-spacing: .03em;
+    margin: 0 0 10px; color: #b3135a;
+  }
+  .sub {
+    font-size: clamp(15px, 3.4vw, 18px);
+    color: #7a3550; letter-spacing: .05em;
+    margin: 0 0 36px;
+  }
+
+  /* ---- 按钮舞台：固定尺寸，按钮绝对定位，移动不影响布局 ---- */
+  .stage {
+    position: relative;
+    width: min(88vw, 520px);
+    height: min(58vh, 320px);
+    margin: 0 auto;
+  }
+  .btn {
+    position: absolute;
+    left: 50%; top: 50%;
+    padding: 14px 44px;
+    font-family: inherit;
+    font-size: 18px; font-weight: 500; letter-spacing: .1em;
+    border: none; border-radius: 999px; cursor: pointer;
+    user-select: none; -webkit-user-select: none;
+    white-space: nowrap;
+    touch-action: manipulation;
+    transition:
+      left .36s cubic-bezier(.22,.61,.36,1),
+      top  .36s cubic-bezier(.22,.61,.36,1),
+      transform .36s cubic-bezier(.22,.61,.36,1),
+      background .25s ease, color .25s ease, box-shadow .25s ease;
+    will-change: left, top, transform;
+  }
+  .btn:focus-visible { outline: 3px solid rgba(255,255,255,.85); outline-offset: 3px; }
+
+  /* 「愿意」初始居中对齐在舞台中心偏左 */
+  .btn-yes {
+    transform: translate(calc(-100% - 14px), -50%);
+    background: linear-gradient(135deg, #ff5c9c, #ff2e7e);
+    color: #fff;
+    box-shadow: 0 10px 26px rgba(255, 46, 126, 0.38);
+    z-index: 2;
+  }
+  .btn-yes:hover { background: linear-gradient(135deg, #ff6ea8, #ff3f8c); }
+  /* 点击「不要」后：平滑移动到舞台正中心，保持最高层级 */
+  .btn-yes.top {
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+  }
+
+  /* 「不要」初始在舞台中心偏右 */
+  .btn-no {
+    transform: translate(14px, -50%);
+    background: #fff; color: #ff2e7e;
+    box-shadow: 0 8px 22px rgba(255, 46, 126, 0.22);
+    z-index: 2;
+  }
+  .btn-no:hover { background: #fff2f7; }
+
+  /* ---- 第二页 ---- */
+  .btn-restart {
+    position: static; display: inline-block; margin-top: 32px;
+    transform: none; left: auto; top: auto;
+    background: #fff; color: #ff2e7e;
+    box-shadow: 0 8px 22px rgba(255, 46, 126, 0.22);
+  }
+  .btn-restart:hover { background: #fff2f7; }
+
+  .page2 .emoji {
+    font-size: clamp(64px, 16vw, 112px);
+    line-height: 1.2; margin-bottom: 22px;
+    animation: pop .6s cubic-bezier(.22, 1.61, .36, 1) both;
+  }
+  .page2 h1 {
+    font-family: "Noto Serif SC", "Songti SC", STSong, serif;
+    font-size: clamp(28px, 5.6vw, 44px);
+    font-weight: 600; margin: 0 0 14px; color: #b3135a;
+    animation: pop .6s .12s cubic-bezier(.22, 1.61, .36, 1) both;
+  }
+  .page2 p {
+    font-size: 17px; color: #7a3550; margin: 0;
+    animation: pop .6s .22s cubic-bezier(.22, 1.61, .36, 1) both;
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(.55); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+</style>
+</head>
+<body>
+  <div class="hearts" id="hearts"></div>
+
+  <!-- 左上角返回博客首页 -->
+  <a class="back-home" href="index.html">&larr; 返回</a>
+
+  <!-- 第一页：邀请 -->
+  <div class="page" id="page1">
+    <h1 class="title">？</h1>
+    <p class="sub">点「愿意」就答应我啦～</p>
+    <div class="stage" id="stage">
+      <button class="btn btn-yes" id="yesBtn" type="button">愿意</button>
+      <button class="btn btn-no" id="noBtn" type="button">不要</button>
+    </div>
+  </div>
+
+  <!-- 第二页：惊喜 -->
+  <div class="page page2" id="page2">
+    <div class="emoji">😳🥰🎉</div>
+    <h1>我就知道你就是想要</h1>
+    <p>那……好啦，不许反悔哦！</p>
+    <button class="btn btn-restart" id="restartBtn" type="button">再试一次</button>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+  var yesBtn = document.getElementById("yesBtn");
+  var noBtn = document.getElementById("noBtn");
+  var stage = document.getElementById("stage");
+  var page1 = document.getElementById("page1");
+  var page2 = document.getElementById("page2");
+  var restartBtn = document.getElementById("restartBtn");
+
+  var PAD = 10;                                   // 角落内边距
+  var texts = ["不要", "再想想嘛", "点不到我", "真的不要吗"];
+  var textIdx = 0;
+  var moved = false;                              // 「愿意」是否已居中
+  var cornerIdx = -1;                             // 「不要」当前所在角落
+
+  /* 四角坐标：依据舞台与按钮实际尺寸动态计算，预留 PAD 内边距 */
+  function getCorners() {
+    var s = stage.getBoundingClientRect();
+    var w = noBtn.offsetWidth;
+    var h = noBtn.offsetHeight;
+    return [
+      { left: PAD,            top: PAD },
+      { left: s.width - w - PAD, top: PAD },
+      { left: PAD,            top: s.height - h - PAD },
+      { left: s.width - w - PAD, top: s.height - h - PAD }
+    ];
+  }
+
+  /* 下一个角落：优先对角，否则随机挑一个与当前不同的 */
+  function nextCorner(cur) {
+    if (Math.random() < 0.65) return (cur + 2) % 4;   // 对角
+    var others = [0, 1, 2, 3].filter(function (c) { return c !== cur; });
+    return others[Math.floor(Math.random() * others.length)];
+  }
+
+  function moveNoTo(corner) {
+    var c = getCorners()[corner];
+    noBtn.style.left = c.left + "px";
+    noBtn.style.top = c.top + "px";
+    noBtn.style.transform = "translate(0,0)";
+    cornerIdx = corner;
+  }
+
+  function cycleText() {
+    textIdx = (textIdx + 1) % texts.length;
+    noBtn.textContent = texts[textIdx];
+  }
+
+  /* 「不要」：仅由点击/触摸触发，禁止悬停触发 */
+  noBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    cycleText();                       // 先换文案，角落坐标按新按钮宽度计算，避免越界
+    if (!moved) {
+      moved = true;
+      yesBtn.classList.add("top");     // 「愿意」平滑移到正中心并置顶
+      moveNoTo(1);                     // 首次：右上角
+    } else {
+      moveNoTo(nextCorner(cornerIdx)); // 之后：换一个角落（优先对角）
+    }
+  });
+
+  /* 「愿意」：始终可点击，进入惊喜页 */
+  yesBtn.addEventListener("click", function () {
+    page1.style.display = "none";
+    page2.classList.add("show");
+  });
+
+  /* 重新开始 */
+  restartBtn.addEventListener("click", function () {
+    page2.classList.remove("show");
+    page1.style.display = "";
+    yesBtn.classList.remove("top");
+    noBtn.style.left = "";
+    noBtn.style.top = "";
+    noBtn.style.transform = "";
+    noBtn.textContent = "不要";
+    textIdx = 0;
+    moved = false;
+    cornerIdx = -1;
+  });
+
+  /* 窗口缩放后重新计算边界，保证「不要」不越界 */
+  var raf = null;
+  window.addEventListener("resize", function () {
+    if (!moved) return;
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(function () {
+      var c = getCorners()[cornerIdx];
+      noBtn.style.transition = "none";
+      noBtn.style.left = c.left + "px";
+      noBtn.style.top = c.top + "px";
+      requestAnimationFrame(function () { noBtn.style.transition = ""; });
+    });
+  });
+
+  /* 飘落的小爱心装饰 */
+  var hearts = document.getElementById("hearts");
+  var heartChars = ["💗", "💖", "💘", "💝", "🩷"];
+  for (var i = 0; i < 14; i++) {
+    var span = document.createElement("span");
+    span.className = "heart";
+    span.textContent = heartChars[i % heartChars.length];
+    span.style.left = (Math.random() * 100) + "%";
+    span.style.animationDuration = (6 + Math.random() * 8) + "s";
+    span.style.animationDelay = (-Math.random() * 12) + "s";
+    span.style.fontSize = (14 + Math.random() * 18) + "px";
+    hearts.appendChild(span);
+  }
+})();
+</script>
+</body>
+</html>

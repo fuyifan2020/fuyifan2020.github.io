@@ -1,0 +1,35 @@
+ctinexus的学习
+
+https://github.com/peng-gao-lab/CTINexus
+
+
+原版接入gpt模型，现利用deepseek和ollama本地部署的embedding模型(nomic-embed-text)：
+
+#① 启动 Ollama 
+	ollama serve
+# 确认：curl.exe http://localhost:11434/api/tags 有返回即 OK
+
+#② 启动 Web UI（新开一个终端）
+cd c:\Users\ASUS1\OneDrive\桌面\ctinexus-main.\run.bat        
+# 或者 .\.venv\Scripts\python.exe -m ctinexus.app
+
+各部分模型选择
+Intelligence Extraction Model	deepseek-chat	DeepSeek API
+Entity Tagging Model	deepseek-chat	DeepSeek API
+Entity Alignment Model	nomic-embed-text	Ollama 本地
+Link Prediction Model	deepseek-chat	DeepSeek API
+
+论文核心
+
+1 kNN 增强的 ICL 三元组抽取（Phase 1）——单次推理端到端抽取
+2 分层实体对齐（Phase 2）——粗粒度类型分组 + 细粒度 embedding 聚类
+3 长距离关系预测（Phase 3）——用度中心性找关键节点，补上跨子图的隐含关系
+
+论文建议的精读路线（from ds）
+
+1.§3 Overview + Fig. 2（5 分钟）：建立三阶段全景图，对照代码的 gradio_utils.run_pipeline 的进度条（0.05→0.2→0.45→0.7→0.9→1.0 就是三阶段的执行顺序）
+2.§4.2 + Fig. 3：理解 ICL prompt 构造（指令+示例+query 三件套），对照 ie.jinja
+3.§4.3 + Fig. 4：你已经精通（EA 三件套），可以只看 IOC 保护那段原文
+4.§4.4 + Fig. 5：LP 设计，对照 link.jinja 和 Linker
+5.§5.3-5.4：消融实验——这是论文"为什么这么设计"的证据链
+6.§6 Discussion：局限性和未来方向——也是你下一阶段"本体延展"的出发点

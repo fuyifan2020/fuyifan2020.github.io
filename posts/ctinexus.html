@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CTINexus 学习笔记：本地部署与论文精读 · FuYifan</title>
+  <meta name="description" content="本地部署 CTINexus（Ollama 本地 embedding + DeepSeek API），并梳理论文三大核心创新与一条精读路线。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../index.html">FuYifan<span class="dot">.</span></a>
+      <button class="nav-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
+      <nav class="nav-links">
+        <a href="../index.html">文章</a>
+        <a href="../about.html">关于</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap wrap-read">
+    <header class="post-header reveal">
+      <div class="meta">
+        <span class="cat">技术</span>
+        <span>2026-08-26</span>
+        <span>3 分钟</span>
+      </div>
+      <h1>CTINexus 学习笔记：本地部署与论文精读</h1>
+      <div class="rule"></div>
+    </header>
+    <article class="post-body prose reveal">
+<p>CTINexus 是一个把网络安全威胁情报（CTI）自动构建成知识图谱的开源工具。最近我把它在本地跑了起来，并把原论文啃了一遍。项目地址在 &lt;a href="https://github.com/peng-gao-lab/CTINexus" target="_blank" rel="noopener"&gt;peng-gao-lab/CTINexus&lt;/a&gt;。</p>
+<div class="paper-card">
+  <div class="paper-badge">PDF</div>
+  <div class="paper-info">
+    <div class="paper-name">CTINexus 原论文</div>
+    <div class="paper-size">PDF · 825 KB</div>
+  </div>
+  <a class="paper-dl" href="../assets/papers/ctinexus.pdf" target="_blank" rel="noopener">下载 / 查看 ↗</a>
+</div>
+<iframe class="paper-frame" src="../assets/papers/ctinexus.pdf" title="CTINexus 原论文"></iframe>
+
+<p>原版接入的是 GPT 模型，我改成了 &lt;strong&gt;DeepSeek API&lt;/strong&gt; 负责推理，embedding 则改用 &lt;strong&gt;Ollama 本地部署&lt;/strong&gt;的 &lt;code&gt;nomic-embed-text&lt;/code&gt;，既省 token，又不把数据发出去。</p>
+<h2>本地部署</h2>
+<h3>① 启动 Ollama</h3>
+<pre><code>ollama serve
+# 确认：curl.exe http://localhost:11434/api/tags 有返回即 OK</code></pre>
+<h3>② 启动 Web UI（新开一个终端）</h3>
+<pre><code>cd c:\Users\ASUS1\OneDrive\桌面\ctinexus-main
+.\run.bat
+# 或者
+.\.venv\Scripts\python.exe -m ctinexus.app</code></pre>
+<h2>各部分模型选择</h2>
+<div class="table-wrap"><table><thead><tr><th>阶段</th><th>模型</th><th>来源</th></tr></thead><tbody><tr><td>Intelligence Extraction</td><td>deepseek-chat</td><td>DeepSeek API</td></tr><tr><td>Entity Tagging</td><td>deepseek-chat</td><td>DeepSeek API</td></tr><tr><td>Entity Alignment</td><td>nomic-embed-text</td><td>Ollama 本地</td></tr><tr><td>Link Prediction</td><td>deepseek-chat</td><td>DeepSeek API</td></tr></tbody></table></div>
+<h2>论文核心</h2>
+<ol>
+<li>&lt;strong&gt;kNN 增强的 ICL 三元组抽取（Phase 1）&lt;/strong&gt; —— 单次推理端到端抽取。</li>
+<li>&lt;strong&gt;分层实体对齐（Phase 2）&lt;/strong&gt; —— 粗粒度类型分组 + 细粒度 embedding 聚类。</li>
+<li>&lt;strong&gt;长距离关系预测（Phase 3）&lt;/strong&gt; —— 用度中心性找关键节点，补上跨子图的隐含关系。</li>
+</ol>
+<h2>论文建议的精读路线（from ds）</h2>
+<ol>
+<li>§3 Overview + Fig. 2（5 分钟）：建立三阶段全景图，对照代码的 &lt;code&gt;gradio_utils.run_pipeline&lt;/code&gt; 的进度条（0.05→0.2→0.45→0.7→0.9→1.0 就是三阶段的执行顺序）。</li>
+<li>§4.2 + Fig. 3：理解 ICL prompt 构造（指令+示例+query 三件套），对照 &lt;code&gt;ie.jinja&lt;/code&gt;。</li>
+<li>§4.3 + Fig. 4：EA 三件套你已经精通，可以只看 IOC 保护那段原文。</li>
+<li>§4.4 + Fig. 5：LP 设计，对照 &lt;code&gt;link.jinja&lt;/code&gt; 和 &lt;code&gt;Linker&lt;/code&gt;。</li>
+<li>§5.3-5.4：消融实验 —— 这是论文“为什么这么设计”的证据链。</li>
+<li>§6 Discussion：局限性和未来方向 —— 也是下一阶段“本体延展”的出发点。</li>
+</ol>
+      <div class="post-nav">
+        <a href="../index.html">&larr; 返回文章列表</a>
+      </div>
+    </article>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> FuYifan · 用文字留存时光</span>
+      <span>
+        <a href="../index.html">文章</a> &nbsp;·&nbsp;
+        <a href="../about.html">关于</a> &nbsp;·&nbsp;
+        <a href="https://github.com/fuyifan2020" target="_blank" rel="noopener">GitHub</a>
+      </span>
+    </div>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

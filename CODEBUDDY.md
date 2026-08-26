@@ -38,15 +38,22 @@ js/main.js          交互脚本：渲染列表、移动端导航、滚动渐显
 4. **样式集中在 `assets/css/style.css`**：颜色/字体等主题通过 `:root` 里的 CSS 变量统一控制（见 `--bg`、`--gold`、`--text` 等），改主题只需调变量，不要散落在各页面。
 5. **字体走 Google Fonts**：`Noto Serif SC`（衬线标题）+ `Noto Sans SC`（无衬线正文），含 `display=swap` 与 `preconnect`，离线预览会回退到系统字体。
 
-### 新增一篇文章的标准流程
+### 发布新文章（推荐：自动化脚本）
 
-1. 在 `posts/` 下新建 `<slug>.html`，复制任一篇现有文章为模板，替换 `post-header` 元信息与 `<article>` 正文。
-2. 在 `js/posts.js` 的 `POSTS` 数组顶部（或任意位置）加一项，保证 `slug` 与文件名一致。
-3. 如需要，更新首尾文章的「上一篇/下一篇」链接（`.post-nav`）。
-4. 本地 `http.server` 预览，确认列表与详情页正常，再 `git push`。
+日常发文章请用 `scripts/publish_post.py`，不要手写 `posts/*.html`：
+
+1. 在 `Blogs/<日期>/` 下放 `<name>.md`（带 front-matter：title/slug/date/category/excerpt/paper）和可选 `.pdf`。
+2. 运行 `python3 scripts/publish_post.py "Blogs/<日期>"` —— 自动生成 `posts/<slug>.html`、复制 PDF 到 `assets/papers/`、并在 `js/posts.js` 登记。
+3. `git add -A && git commit && git push origin main`。
+
+详细约定见 `POSTING.md`；可复用技能见 `.codebuddy/skills/publish-post/SKILL.md`。
+文章正文用 Markdown：用 `#`/`##` 写小节，``` 写代码，`|` 写表格，`1.` 写有序列表；正文写 `{{PDF}}` 即在该处内嵌 PDF 下载卡片+在线预览。
+
+**删除文章**：直接删掉 `posts/<slug>.html`，下次运行任意一次发布脚本时 `js/posts.js` 会自动剔除已不存在的文章（无需手动改数据）。
 
 ### 易踩的坑
 
 - 文章页在 `posts/` 子目录，引用资源要用 `../assets/css/style.css`、`../js/main.js`、`../index.html`（首页/关于页则用 `assets/...` 无 `../`）。
 - 首页文章列表依赖 JS；若用户报告「列表空白」，先确认 `js/posts.js` 与 `js/main.js` 路径正确且 `POSTS` 中 `slug` 对应的 HTML 文件存在。
 - 不要引入需要构建的步骤（如 Sass、React、打包器），会破坏「纯静态零构建」的部署方式。
+- 改 `scripts/publish_post.py` 时注意：它用正则解析 `js/posts.js` 的扁平对象，新增字段请保持在 `slug/title/date/category/excerpt/read` 内，值用双引号包裹。

@@ -246,6 +246,44 @@ h1, h2, h3, h4 {
 }
 .post-body pre code { background: none; padding: 0; color: var(--text); }
 
+/* 论文下载卡片 */
+.paper-card {
+  display: flex; align-items: center; gap: 18px;
+  margin: 32px 0 18px; padding: 18px 22px;
+  background: var(--bg-soft); border: 1px solid var(--line); border-radius: 12px;
+}
+.paper-badge {
+  flex: none; width: 46px; height: 46px; border-radius: 10px;
+  display: grid; place-items: center;
+  background: linear-gradient(160deg, #1c1a14, #14110b);
+  border: 1px solid var(--line-strong);
+  color: var(--gold); font-family: var(--serif); font-weight: 600; letter-spacing: .04em;
+}
+.paper-info { flex: 1; min-width: 0; }
+.paper-name { color: var(--text); font-size: 16px; }
+.paper-size { color: var(--text-faint); font-size: 12.5px; letter-spacing: .08em; margin-top: 3px; }
+.paper-dl {
+  flex: none; padding: 10px 18px; border-radius: 999px;
+  border: 1px solid var(--gold); color: var(--gold);
+  font-size: 13.5px; letter-spacing: .06em;
+  transition: background .25s var(--ease), color .25s var(--ease);
+}
+.paper-dl:hover { background: var(--gold); color: #14110b; }
+.paper-frame {
+  width: 100%; height: 78vh; min-height: 520px;
+  border: 1px solid var(--line); border-radius: 12px; margin-top: 8px; background: #fff;
+}
+
+/* 表格 */
+.table-wrap { overflow-x: auto; margin: 28px 0; }
+.table-wrap table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.table-wrap th, .table-wrap td {
+  text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line);
+}
+.table-wrap th { color: var(--gold); font-weight: 500; font-size: 13px; letter-spacing: .08em; }
+.table-wrap td { color: var(--text-muted); }
+.table-wrap tr:hover td { color: var(--text); }
+
 .post-nav {
   margin-top: 60px; padding-top: 26px; border-top: 1px solid var(--line);
   display: flex; justify-content: space-between; gap: 16px;

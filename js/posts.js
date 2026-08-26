@@ -7,7 +7,7 @@
 window.POSTS = [
   {
     slug: "welcome",
-    title: "你好，这里是傅艺梵",
+    title: "你好，这里是 FuYifan",
     date: "2024-08-20",
     category: "随笔",
     excerpt: "关于这个网站的由来，以及我打算在这里记录些什么。",

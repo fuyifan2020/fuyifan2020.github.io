@@ -4,7 +4,7 @@ This file provides guidance to CodeBuddy Code when working with code in this rep
 
 ## 项目概况
 
-这是傅艺梵的个人博客，部署在 GitHub Pages：`https://fuyifan2020.github.io/`，仓库为 `https://github.com/fuyifan2020/fuyifan2020.github.io`。
+这是 FuYifan 的个人博客，部署在 GitHub Pages：`https://fuyifan2020.github.io/`，仓库为 `https://github.com/fuyifan2020/fuyifan2020.github.io`。
 
 **纯静态站点，无构建步骤、无依赖、无框架。** 所有页面直接由浏览器解析，GitHub Pages 原生托管（仓库即站点根目录，无需 `docs/` 子目录或 Jekyll）。
 

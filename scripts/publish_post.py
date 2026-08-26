@@ -96,7 +96,7 @@ POST_TEMPLATE = """<!DOCTYPE html>
 </html>
 """
 
-PAPER_TEMPLATE = """<div class="paper-card">
+PAPER_CARD = """<div class="paper-card">
   <div class="paper-badge">PDF</div>
   <div class="paper-info">
     <div class="paper-name">{name}</div>
@@ -104,7 +104,12 @@ PAPER_TEMPLATE = """<div class="paper-card">
   </div>
   <a class="paper-dl" href="../assets/papers/{slug}.pdf" target="_blank" rel="noopener">下载 / 查看 ↗</a>
 </div>
-<iframe class="paper-frame" src="../assets/papers/{slug}.pdf" title="{name}"></iframe>
+"""
+
+PAPER_FRAME = """<div class="paper-appendix">
+  <h3>附：{name}</h3>
+  <iframe class="paper-frame" src="../assets/papers/{slug}.pdf" title="{name}"></iframe>
+</div>
 """
 
 
@@ -137,6 +142,8 @@ def estimate_read(md):
 
 
 def inline(s):
+    # 先转义原文中的特殊字符，再插入标签（顺序不能反，否则标签会被转义成纯文本）
+    s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     # 链接 [t](u)
     s = re.sub(
         r"\[([^\]]+)\]\(([^)]+)\)",
@@ -145,10 +152,8 @@ def inline(s):
     )
     # 粗体 **x**
     s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
-    # 行内代码 `x`
-    s = re.sub(r"`([^`]+)`", lambda m: "<code>" + html.escape(m.group(1)) + "</code>", s)
-    # 转义剩余特殊字符
-    s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    # 行内代码 `x`（内容已转义，直接包裹）
+    s = re.sub(r"`([^`]+)`", lambda m: "<code>" + m.group(1) + "</code>", s)
     return s
 
 
@@ -355,11 +360,13 @@ def main():
         size = os.path.getsize(dest)
         size_str = ("%.1f MB" % (size / 1024 / 1024)) if size > 1024 * 1024 else ("%d KB" % (size // 1024))
         name = meta.get("paper") or (title + "（原论文）")
-        card = PAPER_TEMPLATE.format(name=name, size=size_str, slug=slug)
+        card = PAPER_CARD.format(name=name, size=size_str, slug=slug)
+        frame = PAPER_FRAME.format(name=name, slug=slug)
         if "__PDF__" in content:
             content = content.replace("__PDF__", card)
         else:
             content += "\n" + card
+        content += "\n" + frame  # 在线预览始终置于文末，避免打断阅读
     else:
         content = content.replace("__PDF__", "")
 

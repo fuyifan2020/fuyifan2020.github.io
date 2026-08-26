@@ -317,4 +317,11 @@ h1, h2, h3, h4 {
   .nav-toggle { display: block; }
   .hero { padding: 72px 0 48px; }
   .post-card:hover { padding-left: 4px; }
+
+  /* 论文下载卡片：窄屏改为纵向堆叠，避免 info 被挤成竖排 */
+  .paper-card { flex-wrap: wrap; }
+  .paper-info { flex: 1 1 calc(100% - 64px); } /* 预留 badge 46px + gap 18px */
+  .paper-dl { flex: 1 1 100%; text-align: center; }
+  /* 表格保持最小宽度，窄屏整表横向滚动而不是挤压换行 */
+  .table-wrap table { min-width: 400px; }
 }

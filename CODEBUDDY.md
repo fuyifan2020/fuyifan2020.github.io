@@ -27,7 +27,7 @@ about.html          关于我页
 posts/<slug>.html   每篇文章一个独立 HTML 文件（真实正文写在这里）
 assets/css/style.css 全局设计系统（CSS 变量、排版、布局、响应式、动效）
 js/posts.js         文章元数据数组 window.POSTS（首页列表的数据源）
-js/main.js          交互脚本：渲染列表、移动端导航、滚动渐显、导航高亮
+js/main.js          交互脚本：渲染列表(含 #post-count 计数)、移动端导航、滚动渐显、导航高亮
 ```
 
 ### 关键设计约定
@@ -49,11 +49,13 @@ js/main.js          交互脚本：渲染列表、移动端导航、滚动渐显
 详细约定见 `POSTING.md`；可复用技能见 `.codebuddy/skills/publish-post/SKILL.md`。
 文章正文用 Markdown：用 `#`/`##` 写小节，``` 写代码，`|` 写表格，`1.` 写有序列表；正文写 `{{PDF}}` 即在该处内嵌 PDF 下载卡片+在线预览。
 
-**删除文章**：直接删掉 `posts/<slug>.html`，下次运行任意一次发布脚本时 `js/posts.js` 会自动剔除已不存在的文章（无需手动改数据）。
+注意：`publish_post.py` 的 `md_to_html` 是**手写正则解析器（非标准 Markdown）**，仅支持上述语法（标题 `#`→`<h2>`，最多 `###`→`<h4>`）；嵌套列表、脚注等复杂语法不支持。front-matter 不写 `read` 时按 350 字/分钟自动估算。
+
+**删除文章**：直接删掉 `posts/<slug>.html`，下次运行任意一次发布脚本时 `js/posts.js` 会自动剔除已不存在的文章（无需手动改数据）。注意：`assets/papers/<slug>.pdf` 不会被自动清理，需手动删除。
 
 ### 易踩的坑
 
 - 文章页在 `posts/` 子目录，引用资源要用 `../assets/css/style.css`、`../js/main.js`、`../index.html`（首页/关于页则用 `assets/...` 无 `../`）。
-- 首页文章列表依赖 JS；若用户报告「列表空白」，先确认 `js/posts.js` 与 `js/main.js` 路径正确且 `POSTS` 中 `slug` 对应的 HTML 文件存在。
+- 首页文章列表依赖 JS；若用户报告「列表空白」，先确认 `js/posts.js` 与 `js/main.js` 路径正确、`index.html` 按 `js/posts.js` → `js/main.js` 顺序加载（`main.js` 依赖 `window.POSTS`），且 `POSTS` 中 `slug` 对应的 HTML 文件存在。
 - 不要引入需要构建的步骤（如 Sass、React、打包器），会破坏「纯静态零构建」的部署方式。
 - 改 `scripts/publish_post.py` 时注意：它用正则解析 `js/posts.js` 的扁平对象，新增字段请保持在 `slug/title/date/category/excerpt/read` 内，值用双引号包裹。

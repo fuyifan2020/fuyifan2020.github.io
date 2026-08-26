@@ -82,7 +82,6 @@ POST_TEMPLATE = """<!DOCTYPE html>
   </main>
   <footer class="site-footer">
     <div class="wrap">
-      <span>&copy; <span id="year"></span> FuYifan · 用文字留存时光</span>
       <span>
         <a href="../index.html">文章</a> &nbsp;·&nbsp;
         <a href="../about.html">关于</a> &nbsp;·&nbsp;
@@ -90,7 +89,6 @@ POST_TEMPLATE = """<!DOCTYPE html>
       </span>
     </div>
   </footer>
-  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
   <script src="../js/main.js"></script>
 </body>
 </html>

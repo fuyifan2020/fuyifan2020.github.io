@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>关于 · 傅艺梵</title>
+  <meta name="description" content="关于傅艺梵 —— 我是谁，以及这个网站在记录什么。" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">傅艺梵<span class="dot">.</span></a>
+      <button class="nav-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
+      <nav class="nav-links">
+        <a href="index.html">文章</a>
+        <a href="about.html">关于</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap wrap-read">
+    <header class="page-head reveal">
+      <p class="eyebrow">About</p>
+      <h1>关于我</h1>
+      <p>你好，我是傅艺梵。很高兴在这里与你相遇。</p>
+    </header>
+
+    <article class="prose reveal">
+      <p>这是我的个人博客，一个用来存放思考、记录生活的地方。比起追逐热度，我更愿意把时间花在那些「慢」而「真」的事情上——读一本好书，写一段真诚的文字，认真地对待每一处细节。</p>
+
+      <h2>我关心的事</h2>
+      <p>设计、文字与生活美学是我长期着迷的主题。我相信好的设计不在于繁复，而在于克制；不在于喧哗，而在于留白。这个网站本身，就是我对「高级感」与「简洁」的一次实践。</p>
+
+      <h2>这个网站在记录什么</h2>
+      <ul>
+        <li>对设计与排版的观察与体会</li>
+        <li>生活里那些值得停留的瞬间</li>
+        <li>读书、观影与思考后的碎碎念</li>
+      </ul>
+
+      <h2>联系我</h2>
+      <p>如果你也喜欢这些话题，欢迎随时找我聊聊。</p>
+    </article>
+
+    <ul class="contact-list reveal">
+      <li><span class="k">GitHub</span><span class="v"><a href="https://github.com/fuyifan2020" target="_blank" rel="noopener">github.com/fuyifan2020</a></span></li>
+      <li><span class="k">邮箱</span><span class="v"><a href="mailto:2041026396@qq.com">2041026396@qq.com</a></span></li>
+      <li><span class="k">站点</span><span class="v"><a href="https://fuyifan2020.github.io/" target="_blank" rel="noopener">fuyifan2020.github.io</a></span></li>
+    </ul>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> 傅艺梵 · 用文字留存时光</span>
+      <span>
+        <a href="index.html">文章</a> &nbsp;·&nbsp;
+        <a href="about.html">关于</a> &nbsp;·&nbsp;
+        <a href="https://github.com/fuyifan2020" target="_blank" rel="noopener">GitHub</a>
+      </span>
+    </div>
+  </footer>
+
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+  <script src="js/main.js"></script>
+</body>
+</html>

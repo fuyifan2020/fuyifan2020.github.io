@@ -47,14 +47,14 @@ CODEBUDDY.md            本文件
 
 日常发文章请用 `scripts/publish_post.py`，不要手写 `posts/*.html`：
 
-1. 在 `Blogs/<日期>/` 下放 `<name>.md`（带 front-matter：title/slug/date/category/excerpt/paper）和可选 `.pdf`。
+1. 在 `Blogs/<日期>/` 下放 `<name>.md`（带 front-matter：title/slug/date/category/excerpt/paper）和可选 `.pdf`。其中 `paper` 可选，用于覆盖随附 PDF 下载卡片与在线预览区的显示标题（不填则默认 `标题（原论文）`）。
 2. 运行 `python3 scripts/publish_post.py "Blogs/<日期>"` —— 自动生成 `posts/<slug>.html`、复制 PDF 到 `assets/papers/`、并在 `js/posts.js` 登记。
 3. `git add -A && git commit && git push origin main`。
 
 详细约定见 `POSTING.md`；可复用技能见 `.codebuddy/skills/publish-post/SKILL.md`。
 文章正文用 Markdown：用 `#`/`##` 写小节，``` 写代码，`|` 写表格，`1.` 写有序列表；正文写 `{{PDF}}` 即在该处内嵌 PDF 下载卡片+在线预览。
 
-注意：`publish_post.py` 的 `md_to_html` 是**手写正则解析器（非标准 Markdown）**，仅支持上述语法（标题 `#`→`<h2>`，最多 `###`→`<h4>`）；嵌套列表、脚注等复杂语法不支持。front-matter 不写 `read` 时按 350 字/分钟自动估算。
+注意：`publish_post.py` 的 `md_to_html` 是**手写正则解析器（非标准 Markdown）**，仅支持上述语法（标题 `#`→`<h2>`、`##`→`<h3>`、`###`→`<h4>`，`####` 及以上均封顶为 `<h4>`）；嵌套列表、脚注等复杂语法不支持。front-matter 不写 `read` 时按 350 字/分钟自动估算。
 
 **删除文章**：直接删掉 `posts/<slug>.html`，下次运行任意一次发布脚本时 `js/posts.js` 会自动剔除已不存在的文章（无需手动改数据）。注意：`assets/papers/<slug>.pdf` 不会被自动清理，需手动删除。
 

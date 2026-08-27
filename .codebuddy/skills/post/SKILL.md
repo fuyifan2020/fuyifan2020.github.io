@@ -22,7 +22,7 @@ description: 综合「上传博客文章」的完整流程——涵盖任意来�
 来源可能在 `Blogs/<日期>/`，也可能直接贴在对话里。先确认素材位置与格式。
 
 ### 2. 按格式转换 / 提取为干净 .md
-脚本 `scripts/publish_post.py` 只认 `.md`（优先）或 `.txt`（次优先）+ 可选 `.pdf`。其它格式先转成 `.md`：
+脚本 `scripts/publish_post.py` 只认 `.md`（优先）或 `.txt`（次优先）+ 可选 `.pdf`。其它格式先转成 `.md`（可借助本技能附带的 `scripts/convert_source.py <源文件> [--out Blogs/日期]` 自动抽取并生成带 front-matter 的草稿；pdf/docx/pptx 需对应工具/库，缺失会提示）。各格式细节见 `references/formats.md`。
 
 | 格式 | 处理 |
 |---|---|
@@ -73,8 +73,9 @@ python3 scripts/publish_post.py "Blogs/<日期>"
    ```bash
    python3 -m http.server 8099
    ```
-   打开 `http://localhost:8099/posts/<slug>.html`。若环境有可用的浏览器/截图工具（如 playwright），截图肉眼核对；若浏览器二进制下载受限、无法截图，则明确说明改用「结构 + CSS 规则 + 服务 200」核验，并提示用户自行硬刷新自查。
-5. **迭代**：发现瑕疵就回改 `Blogs/<日期>/*.md` 重跑脚本，直到完美。
+   打开 `http://localhost:8099/posts/<slug>.html`。若环境有可用的浏览器/截图工具（如 playwright），截图肉眼核对；若浏览器二进制下载受限、无法截图，则明确说明改用「结构 + CSS 规则 + 服务 200」核验，并提示用户自行硬刷新自查。详细清单见 `references/qa.md`。
+5. **自动结构核验**：跑 `python3 scripts/verify_post.py <slug>`，确认结构标签、posts.js 登记与倒序、CSS 选择器覆盖均无缺失（详见 `references/qa.md`）。
+6. **迭代**：发现瑕疵就回改 `Blogs/<日期>/*.md` 重跑脚本，直到完美。
 
 ### 6. 部署
 ```bash
@@ -96,6 +97,12 @@ git add -A && git commit -m "发布文章：<标题>" && git push origin main
 - **删除文章**：直接删 `posts/<slug>.html`，下次跑任意一次发布脚本时 `js/posts.js` 会自动剔除；`assets/papers/<slug>.pdf` 不会自动清理，需手动删。
 - 文章页在 `posts/` 子目录，引用资源用 `../assets/...`、导航用 `../index.html`。
 - `read` 字段不写时按 350 字/分钟自动估算。
+
+## 附带的脚本与参考
+- `scripts/convert_source.py <源文件> [--out Blogs/日期]`：多格式（txt/md/html/pdf/docx/pptx）抽取正文 → 带 front-matter 的草稿 `.md`；pdf/docx/pptx 缺工具时打印提示并产出占位草稿。
+- `scripts/verify_post.py <slug>`：自动核验生成文章的结构标签、posts.js 登记与倒序、CSS 选择器覆盖。
+- `references/formats.md`：各格式转换配方、工具安装、解析器语法支持/不支持清单、图片限制。
+- `references/qa.md`：人工核验清单详解、verify_post.py 用法、截图核验与降级策略。
 
 ## 参考
 - 人类可读发布指南：`POSTING.md`

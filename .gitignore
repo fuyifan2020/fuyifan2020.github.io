@@ -1,2 +1,6 @@
 # 浏览器自动化测试临时产物
 .playwright-mcp/
+
+# Python 字节码缓存
+__pycache__/
+*.pyc

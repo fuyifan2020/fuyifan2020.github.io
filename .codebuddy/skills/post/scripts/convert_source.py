@@ -4,7 +4,7 @@
 convert_source.py —— 把各种格式的文章源，提取正文并生成带 front-matter 的草稿 .md
 
 用法:
-    python3 scripts/convert_source.py <源文件路径> [--out Blogs/2026_8_27]
+    python3 .codebuddy/skills/post/scripts/convert_source.py <源文件路径> [--out Blogs/2026_8_27]
 
 说明:
     - 仅依赖 Python 标准库即可处理 .txt / .md / .html。
@@ -142,7 +142,7 @@ def main():
     raw = open(src, encoding="utf-8", errors="ignore").read()
     if ext == "md" and raw.lstrip().startswith("---"):
         shutil.copy(src, out_md)
-        print("✅ 检测到现成 front-matter，已拷贝:", out_md)
+        print("[完成] 检测到现成 front-matter，已拷贝:", out_md)
         print("   请人工精修后再运行 publish_post.py")
         return
 
@@ -164,7 +164,7 @@ def main():
     with open(out_md, "w", encoding="utf-8") as f:
         f.write(fm + body + "\n")
 
-    print("✅ 草稿已生成:", out_md)
+    print("[完成] 草稿已生成:", out_md)
     print("   请人工精修标题 / 分类 / 摘要与正文结构，再运行 publish_post.py")
 
 

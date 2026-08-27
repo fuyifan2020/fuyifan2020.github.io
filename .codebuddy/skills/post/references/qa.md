@@ -7,7 +7,7 @@
 生成文章后先跑一次自动检查：
 
 ```bash
-python3 scripts/verify_post.py <slug>
+python3 .codebuddy/skills/post/scripts/verify_post.py <slug>
 ```
 
 它会输出：

@@ -4,7 +4,7 @@
 verify_post.py —— 对生成的文章做自动排版核验（配合「人工检查至完美」要求）
 
 用法:
-    python3 scripts/verify_post.py <slug>
+    python3 .codebuddy/skills/post/scripts/verify_post.py <slug>
 
 检查项:
     1) posts/<slug>.html 是否存在
@@ -23,12 +23,12 @@ ROOT = str(pathlib.Path(__file__).resolve().parents[4])
 
 def main():
     if len(sys.argv) < 2:
-        print("用法: python3 scripts/verify_post.py <slug>")
+        print("用法: python3 .codebuddy/skills/post/scripts/verify_post.py <slug>")
         sys.exit(1)
     slug = sys.argv[1]
     html_path = os.path.join(ROOT, "posts", slug + ".html")
     if not os.path.isfile(html_path):
-        print("❌ 找不到", html_path)
+        print("[错误] 找不到", html_path)
         sys.exit(1)
     html = open(html_path, encoding="utf-8").read()
 
@@ -60,7 +60,7 @@ def main():
     for tag, selector in sel.items():
         if len(re.findall(r"<%s[\s>]" % tag, html)) > 0:
             ok = selector in css
-            print("  %-10s 用到 %-20s : %s" % (tag, selector, "✓" if ok else "✗ 缺失样式!"))
+            print("  %-10s 用到 %-20s : %s" % (tag, selector, "[OK]" if ok else "[缺失样式!]"))
 
     print("\n提示：脚本仅核验结构 / CSS 是否到位，最终观感仍需 `python3 -m http.server 8099` 肉眼确认。")
 

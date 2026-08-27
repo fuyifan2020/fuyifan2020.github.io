@@ -1,6 +1,6 @@
 ---
 name: post
-description: 综合「上传博客文章」的完整流程——涵盖任意来源格式（txt/md/pdf/docx/html/pptx/图片/聊天零散文字）的归集与转换、按博客风格重组为带 front-matter 的 .md、运行发布脚本、本地人工核验排版、部署与冲突处理。当用户说“上传/发布/发一篇/把这份发出去/帮我发博客”时使用。
+description: 发布博客文章（任意来源格式 txt/md/pdf/docx/html/pptx/图片/聊天文字 → 带 front-matter 的 md → 发布脚本 → 人工核验 → 部署与冲突处理）。用户说“上传/发布/发一篇/把这份发出去/帮我发博客”时使用。
 ---
 
 # 发布博客文章（post）
@@ -22,7 +22,7 @@ description: 综合「上传博客文章」的完整流程——涵盖任意来�
 来源可能在 `Blogs/<日期>/`，也可能直接贴在对话里。先确认素材位置与格式。
 
 ### 2. 按格式转换 / 提取为干净 .md
-脚本 `scripts/publish_post.py` 只认 `.md`（优先）或 `.txt`（次优先）+ 可选 `.pdf`。其它格式先转成 `.md`（可借助本技能附带的 `scripts/convert_source.py <源文件> [--out Blogs/日期]` 自动抽取并生成带 front-matter 的草稿；pdf/docx/pptx 需对应工具/库，缺失会提示）。各格式细节见 `references/formats.md`。
+脚本 `scripts/publish_post.py` 只认 `.md`（优先）或 `.txt`（次优先）+ 可选 `.pdf`。其它格式先转成 `.md`（可借助本技能附带的 `.codebuddy/skills/post/scripts/convert_source.py <源文件> [--out Blogs/日期]` 自动抽取并生成带 front-matter 的草稿；pdf/docx/pptx 需对应工具/库，缺失会提示）。各格式细节见 `references/formats.md`。
 
 | 格式 | 处理 |
 |---|---|
@@ -31,7 +31,7 @@ description: 综合「上传博客文章」的完整流程——涵盖任意来�
 | `.pdf`（作为正文） | 抽取文本再转 .md：`pdftotext file.pdf -` 或 `pandoc file.pdf -t markdown`；若只是要「附带」的论文 PDF，则放原文件并用正文 `{{PDF}}` 内嵌，**不要**抽文字 |
 | `.docx` | `pandoc file.docx -t markdown -o out.md` |
 | `.html` | `pandoc file.html -t markdown -o out.md`，或摘取正文 |
-| `.pptx` / `.ppt` | `pandoc file.pptx -t markdown -o out.md`（或 python-pptx 抽文本） |
+| `.pptx` / `.ppt` | `pandoc file.pptx -t markdown -o out.md`（或 python-pptx 抽文本）。`.ppt`（老格式）建议先转 `.pptx` 或直接用 pandoc，`convert_source.py` 只处理 `.pptx` |
 | 图片 `.png/.jpg/...` | ⚠️ 见下方「图片限制」 |
 | 聊天零散文字 | 由你整理成带 front-matter 的 .md |
 
@@ -43,20 +43,26 @@ description: 综合「上传博客文章」的完整流程——涵盖任意来�
 front-matter 字段（放到文件顶部 `---` 块）：
 ```
 ---
-title:    XX 学习笔记：从 … 到 …
-slug:     xx-notes          # 英文短名，留空按标题生成
-date:     2026-08-27        # 留空取文件夹名
-category: 技术              # 留空默认「笔记」
-excerpt:  一句话摘要（留空取首段）
-paper:    原论文显示名（可选，仅当附 PDF 时用于卡片标题）
+title: XX 学习笔记：从 … 到 …
+slug: xx-notes
+date: 2026-08-27
+category: 技术
+excerpt: 一句话摘要
+paper: 原论文显示名（可选，仅当附 PDF 时用于卡片标题）
 ---
 ```
+> ⚠️ front-matter 内**不要写行内注释**（如 `slug: xx-notes # 说明`），`publish_post.py` 的解析器不识别注释，会把注释拼进值，导致 slug/标题带垃圾字符。字段留空即可，各字段有默认行为：`slug` 留空按标题生成、`date` 留空取文件夹名、`category` 留空默认「笔记」、`excerpt` 留空取首段。
+>
+> ⚠️ **slug 务必显式写英文短名**：自动生成时 `slugify` 会保留中文字符（如「从零开始学习-embedding」），会产生含中文的文件名与 URL，不理想。source 文件名也建议直接用英文，避免 `convert_source.py` 生成中文 slug。
+>
+> 值里的冒号（半角/全角）都安全：解析器按**第一个**半角冒号切分 key/value，`title: Note: 详解` 的值会完整保留 `Note: 详解`，无需转义。
+
 正文语法（脚本是手写正则解析器，**非标准 Markdown**，仅支持下列）：
 - `#`→h2、`##`→h3、`###`→h4（`####` 及以上一律封顶 h4）
 - `**加粗**`、`` `行内代码` ``、`[文本](链接)`
 - 代码块用 ` ``` ` 围栏；表格用 `| a | b |`；有序 `1.` / 无序 `-`
 - 引用 `>`、分隔线 `---`
-- 正文写 `{{PDF}}` 在该处内嵌 PDF 下载卡片 + 在线预览；不写则自动追加文末
+- 正文写 `{{PDF}}` 在该处内嵌 **PDF 下载卡片**；不写则卡片自动追加文末。**在线预览 iframe 一律置于文末**（脚本固定行为，避免打断阅读）
 - **不支持**：嵌套列表、脚注、`![]()` 图片、裸 HTML（会被转义）、`###` 以上的真实 h5/h6
 
 ### 4. 运行发布脚本
@@ -68,13 +74,13 @@ python3 scripts/publish_post.py "Blogs/<日期>"
 ### 5. 本地人工核验（硬性要求，必须做）
 1. **读生成的 `posts/<slug>.html`**，确认转换正确：h2/ol/ul/pre/code/a/strong 是否如期；有无内容丢失或错位。
 2. **核对 `js/posts.js`**：新条目已登记、按 `date` 倒序（新文在前）。
-3. **核对 CSS 覆盖**：`assets/css/style.css` 中该文用到的元素（`.post-body h2`、`.prose ol`、`.post-body pre/code`、`.prose a`、`.table-wrap` 等）确有样式——排版是否正确最终由这些规则决定。
-4. **起本地服务器观察**：
+3. **自动结构核验**：跑 `python3 .codebuddy/skills/post/scripts/verify_post.py <slug>`，确认结构标签、posts.js 登记与倒序、CSS 选择器覆盖均无缺失（详见 `references/qa.md`）。有缺就改，不要直接进肉眼环节。
+4. **核对 CSS 覆盖**：`assets/css/style.css` 中该文用到的元素（`.post-body h2`、`.prose ol`、`.post-body pre/code`、`.prose a`、`.table-wrap` 等）确有样式——排版是否正确最终由这些规则决定（verify_post.py 已代查缺样式，这里人眼再过一遍观感相关项）。
+5. **起本地服务器观察**：
    ```bash
    python3 -m http.server 8099
    ```
    打开 `http://localhost:8099/posts/<slug>.html`。若环境有可用的浏览器/截图工具（如 playwright），截图肉眼核对；若浏览器二进制下载受限、无法截图，则明确说明改用「结构 + CSS 规则 + 服务 200」核验，并提示用户自行硬刷新自查。详细清单见 `references/qa.md`。
-5. **自动结构核验**：跑 `python3 scripts/verify_post.py <slug>`，确认结构标签、posts.js 登记与倒序、CSS 选择器覆盖均无缺失（详见 `references/qa.md`）。
 6. **迭代**：发现瑕疵就回改 `Blogs/<日期>/*.md` 重跑脚本，直到完美。
 
 ### 6. 部署
@@ -94,18 +100,16 @@ git add -A && git commit -m "发布文章：<标题>" && git push origin main
 
 ## 已知限制与补充
 - **图片不支持**：当前解析器不处理 `![]()`，且裸 HTML 会被转义，所以图片无法直接入文。若文章必须有图，要么文字描述，要么先扩展 `publish_post.py` 支持图片（存到 `assets/` 并自定义渲染）。交付时主动说明这一点。
+- **一个文件夹只取第一个 `.md` / `.txt` / `.pdf`**：`publish_post.py` 按文件名排序后取第一个 `.md`（无则第一个 `.txt`）和第一个 `.pdf`。所以一个 `Blogs/<日期>/` 文件夹只放**一篇文章**的源文件；多篇要分开建文件夹，多余的 `.md`/`.pdf` 会被忽略。
 - **删除文章**：直接删 `posts/<slug>.html`，下次跑任意一次发布脚本时 `js/posts.js` 会自动剔除；`assets/papers/<slug>.pdf` 不会自动清理，需手动删。
 - 文章页在 `posts/` 子目录，引用资源用 `../assets/...`、导航用 `../index.html`。
 - `read` 字段不写时按 350 字/分钟自动估算。
 
 ## 附带的脚本与参考
-- `scripts/convert_source.py <源文件> [--out Blogs/日期]`：多格式（txt/md/html/pdf/docx/pptx）抽取正文 → 带 front-matter 的草稿 `.md`；pdf/docx/pptx 缺工具时打印提示并产出占位草稿。
-- `scripts/verify_post.py <slug>`：自动核验生成文章的结构标签、posts.js 登记与倒序、CSS 选择器覆盖。
+- `.codebuddy/skills/post/scripts/convert_source.py <源文件> [--out Blogs/日期]`：多格式（txt/md/html/pdf/docx/pptx）抽取正文 → 带 front-matter 的草稿 `.md`；pdf/docx/pptx 缺工具时打印提示并产出占位草稿。
+- `.codebuddy/skills/post/scripts/verify_post.py <slug>`：自动核验生成文章的结构标签、posts.js 登记与倒序、CSS 选择器覆盖。
 - `references/formats.md`：各格式转换配方、工具安装、解析器语法支持/不支持清单、图片限制。
 - `references/qa.md`：人工核验清单详解、verify_post.py 用法、截图核验与降级策略。
-
-## 参考
 - 人类可读发布指南：`POSTING.md`
 - 站点结构与约定：`CODEBUDDY.md`
 - 现有发布脚本：`scripts/publish_post.py`
-- 同源精简技能：`.codebuddy/skills/publish-post/SKILL.md`

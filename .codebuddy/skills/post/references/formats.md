@@ -12,7 +12,7 @@
 | `.pdf`（仅附带） | 原文件放入 `Blogs/<日期>/`，正文写 `{{PDF}}` | 无 | 不要抽文字，留给脚本内嵌卡片+预览 |
 | `.docx` | `pandoc file.docx -t markdown -o out.md` | pandoc | 或 `python-docx` 抽段落 |
 | `.html` | `pandoc file.html -t markdown -o out.md` | pandoc | `convert_source.py` 也内置极简 stdlib 提取 |
-| `.pptx` | `pandoc file.pptx -t markdown -o out.md` | pandoc | 或 `python-pptx` 抽文本框 |
+| `.pptx` / `.ppt` | `pandoc file.pptx -t markdown -o out.md` | pandoc | `.ppt`（老格式）先转 `.pptx` 或用 pandoc；`convert_source.py` 只处理 `.pptx` |
 | 图片 | ⚠️ 见下方「图片限制」 | — | 当前不可直接入文 |
 | 聊天零散文字 | 人工整理为 `.md` + front-matter | 无 | 按博客语气润色 |
 

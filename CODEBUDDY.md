@@ -8,7 +8,7 @@ This file provides guidance to CodeBuddy Code when working with code in this rep
 
 **纯静态站点，无构建步骤、无依赖、无框架。** 所有页面直接由浏览器解析，GitHub Pages 原生托管（仓库即站点根目录，无需 `docs/` 子目录或 Jekyll）。
 
-语言：中文为主；视觉：暗色背景 + 香槟金/米色点缀，艺术画廊式高级感。
+语言：中文为主；视觉：纯黑 `#000` 背景 + 白/灰层次，胶囊导航 + 圆形品牌标记 + 克制留白 + 入场动效（已去除金色）。
 
 ## 常用命令
 
@@ -38,9 +38,9 @@ CODEBUDDY.md            本文件
 ### 关键设计约定
 
 1. **文章列表是数据驱动的**：首页 `#post-list` 由 `js/main.js` 读取 `js/posts.js` 中的 `window.POSTS` 数组渲染（按 `date` 倒序）。`posts.js` 里每项 `{slug, title, date, category, excerpt, read}` 对应一个 `posts/<slug>.html`。
-2. **导航栏与页脚是手写重复的**：每个 HTML 顶部/底部都直接写了 `<header class="site-header">` 和 `<footer>`（未用 JS 注入），目的是即使 JS 失效页面仍可用，且对 SEO 友好。改动导航时需在 `index.html`、`about.html`、`posts/*.html` 同步修改。
+2. **导航栏与页脚是手写重复的**：每个 HTML 顶部/底部都直接写了 `<header class="site-header">` 和 `<footer>`（未用 JS 注入），目的是即使 JS 失效页面仍可用，且对 SEO 友好。改动导航时需在 `index.html`、`about.html`、`posts/*.html` **以及 `scripts/publish_post.py` 的 `POST_TEMPLATE`** 同步修改——漏改模板会导致下次发布文章时用旧结构覆盖掉改动。注意模板走 `.format()`，内联的 `{` `}` 必须双写，否则发布时 KeyError。
 3. **文章正文是真实 HTML**：`posts/<slug>.html` 内的 `<article class="post-body prose">` 直接写中文内容，可用 `.prose`、`.post-body` 下的 `h2/h3/blockquote/code/pre/ul` 等样式。
-4. **样式集中在 `assets/css/style.css`**：颜色/字体等主题通过 `:root` 里的 CSS 变量统一控制（见 `--bg`、`--gold`、`--text` 等），改主题只需调变量，不要散落在各页面。
+4. **样式集中在 `assets/css/style.css`**：颜色/字体等主题通过 `:root` 里的 CSS 变量统一控制（`--bg`/`--surface`/`--pill-dark`、`--text`/`--text-body`/`--muted`/`--faint`、`--line`/`--line-strong`、`--nav-shadow`、`--serif`/`--sans`），改主题只需调变量，不要散落在各页面。当前为**纯黑白灰**体系（`--gold`/`--beige` 已移除）。
 5. **字体走 Google Fonts**：`Noto Serif SC`（衬线标题）+ `Noto Sans SC`（无衬线正文），含 `display=swap` 与 `preconnect`，离线预览会回退到系统字体。
 
 ### 发布新文章（推荐：自动化脚本）

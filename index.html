@@ -12,25 +12,68 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="assets/css/style.css" />
+  <noscript>
+    <style>.reveal { opacity: 1 !important; transform: none !important; filter: none !important; }</style>
+  </noscript>
 </head>
 <body>
 
+  <canvas id="particles" class="particles-canvas" aria-hidden="true"></canvas>
+
   <header class="site-header">
     <div class="wrap nav">
-      <a class="brand" href="index.html">FuYifan<span class="dot">.</span></a>
-      <button class="nav-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
+      <a class="brand-mark" href="index.html" aria-label="FuYifan 首页"><span>F</span></a>
+
       <nav class="nav-links">
         <a href="index.html">文章</a>
         <a href="about.html">关于</a>
       </nav>
+
+      <a class="nav-cta" href="https://github.com/fuyifan2020" target="_blank" rel="noopener">GitHub</a>
+
+      <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false" aria-controls="nav-sheet">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
 
+  <div class="nav-overlay" hidden></div>
+  <div class="nav-sheet" id="nav-sheet" hidden>
+    <nav>
+      <a href="index.html">文章</a>
+      <a href="about.html">关于</a>
+    </nav>
+    <a class="sheet-cta" href="https://github.com/fuyifan2020" target="_blank" rel="noopener">GitHub</a>
+  </div>
+
   <main>
     <section class="hero wrap">
-      <p class="eyebrow reveal">Personal Journal &middot; 随笔与思考</p>
-      <h1 class="reveal hero-title">Fu Yifan's Blog</h1>
-      <div class="rule reveal"></div>
+      <h1 class="hero-title">Fu Yifan's Blog</h1>
+      <div class="rule reveal" style="--d:.2s"></div>
+    </section>
+
+    <!-- 博客数据：无 JS 时显示下方静态兜底值 -->
+    <section class="stats wrap reveal" style="--d:.28s" aria-label="博客数据">
+      <div class="stat">
+        <span class="stat-icon">#</span>
+        <span class="stat-value" data-count="2" data-decimals="0">2</span>
+        <span class="stat-label">篇文章</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">*</span>
+        <span class="stat-value" data-count="1" data-decimals="0">1</span>
+        <span class="stat-label">个分类</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">&lt;</span>
+        <span class="stat-value" data-count="5" data-decimals="0">5</span>
+        <span class="stat-label">分钟阅读</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">^</span>
+        <span class="stat-value" data-static="1">2026-08</span>
+        <span class="stat-label">最近更新</span>
+      </div>
     </section>
 
     <section class="wrap">
@@ -41,7 +84,7 @@
       <!-- 文章列表由 js/main.js 依据 js/posts.js 渲染 -->
       <div class="post-list" id="post-list"></div>
       <noscript>
-        <p style="color:var(--text-muted)">请开启 JavaScript 以查看文章列表，或前往 <a href="about.html" style="color:var(--gold)">关于页</a>。</p>
+        <p style="color:var(--muted)">请开启 JavaScript 以查看文章列表，或前往 <a href="about.html" style="color:var(--text)">关于页</a>。</p>
       </noscript>
     </section>
   </main>
@@ -57,6 +100,7 @@
   </footer>
 
   <script src="js/posts.js"></script>
+  <script src="js/particles.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

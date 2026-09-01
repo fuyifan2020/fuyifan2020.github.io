@@ -9,18 +9,37 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/style.css" />
+  <noscript>
+    <style>.reveal { opacity: 1 !important; transform: none !important; filter: none !important; }</style>
+  </noscript>
 </head>
 <body>
+  <canvas id="particles" class="particles-canvas" aria-hidden="true"></canvas>
   <header class="site-header">
     <div class="wrap nav">
-      <a class="brand" href="../index.html">FuYifan<span class="dot">.</span></a>
-      <button class="nav-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
+      <a class="brand-mark" href="../index.html" aria-label="FuYifan 首页"><span>F</span></a>
+
       <nav class="nav-links">
         <a href="../index.html">文章</a>
         <a href="../about.html">关于</a>
       </nav>
+
+      <a class="nav-cta" href="https://github.com/fuyifan2020" target="_blank" rel="noopener">GitHub</a>
+
+      <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false" aria-controls="nav-sheet">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
+
+  <div class="nav-overlay" hidden></div>
+  <div class="nav-sheet" id="nav-sheet" hidden>
+    <nav>
+      <a href="../index.html">文章</a>
+      <a href="../about.html">关于</a>
+    </nav>
+    <a class="sheet-cta" href="https://github.com/fuyifan2020" target="_blank" rel="noopener">GitHub</a>
+  </div>
   <main class="wrap wrap-read">
     <header class="post-header reveal">
       <div class="meta">
@@ -88,6 +107,7 @@
       </span>
     </div>
   </footer>
+  <script src="../js/particles.js"></script>
   <script src="../js/main.js"></script>
 </body>
 </html>
